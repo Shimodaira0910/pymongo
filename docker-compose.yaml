@@ -9,9 +9,11 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
 
-  python_app:
-    build: .
-    container_name: python_app
+  python:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    container_name: python
     depends_on:
       - mongodb
     environment:
@@ -19,4 +21,15 @@ services:
       MONGODB_PASSWORD: example
       MONGODB_HOSTNAME: mongodb
     volumes:
-      - .:/code
+      - ./app:/app
+    ports:
+      - 8000:8000
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+  client:
+    build:
+      context: .
+      dockerfile: ./client/Dockerfile
+    container_name: client
+    ports:
+      - "8080:80"

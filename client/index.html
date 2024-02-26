@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Info</title>
+</head>
+<body>
+    <h1>Database Information</h1>
+    <button id="fetchButton">Fetch Data</button>
+    <div id="data"></div>
+
+    <script>
+        document.getElementById('fetchButton').addEventListener('click', async function() {
+            const url = 'http://localhost:8000/get'; 
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // データを整形して表示します。
+                document.getElementById('data').textContent = JSON.stringify(data.data, null, 2);
+            } catch (error) {
+                console.error('データの取得に失敗しました:', error);
+                document.getElementById('data').textContent = 'データの取得に失敗しました。';
+            }
+        });
+    </script>
+</body>
+</html>
