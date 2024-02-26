@@ -3,26 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Info</title>
+    <title>Get and Send Data</title>
 </head>
 <body>
-    <h1>Database Information</h1>
-    <button id="fetchButton">Fetch Data</button>
-    <div id="data"></div>
+    <h1>Get Data from Server</h1>
+    <button id="fetchData">Fetch Data</button>
+    <div id="getData"></div>
+
+    <h2>Send Data to Server</h2>
+    <form id="dataForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required>
+        <br>
+        <button type="submit">Send</button>
+    </form>
+
+    <div id="postResponse"></div>
 
     <script>
-        document.getElementById('fetchButton').addEventListener('click', async function() {
-            const url = 'http://localhost:8000/get'; 
-
+        document.getElementById('fetchData').addEventListener('click', async function() {
             try {
-                const response = await fetch(url);
+                const response = await fetch('http://localhost:8000/get'); // FastAPIサーバーのURLに置き換えてください
                 const data = await response.json();
                 
-                // データを整形して表示します。
-                document.getElementById('data').textContent = JSON.stringify(data.data, null, 2);
+                document.getElementById('getData').textContent = JSON.stringify(data, null, 2);
             } catch (error) {
-                console.error('データの取得に失敗しました:', error);
-                document.getElementById('data').textContent = 'データの取得に失敗しました。';
+                console.error('Error fetching data:', error);
+                document.getElementById('getData').textContent = 'Failed to fetch data.';
+            }
+        });
+
+        document.getElementById('dataForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // フォームのデフォルト送信を防止
+
+            const username = document.getElementById('username').value;
+            const age = document.getElementById('age').value;
+
+            try {
+                const response = await fetch('http://localhost:8000/post', { // FastAPIサーバーのURLに置き換えてください
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        age: age,
+                    }),
+                });
+
+                const responseData = await response.json();
+                
+                document.getElementById('postResponse').textContent = 'Response: ' + JSON.stringify(responseData);
+            } catch (error) {
+                console.error('Error sending data:', error);
+                document.getElementById('postResponse').textContent = 'Failed to send data.';
             }
         });
     </script>

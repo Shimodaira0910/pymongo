@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.requests import Request
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from os.path import join, dirname
@@ -36,9 +37,17 @@ def get_database():
 async def get_database_info():
     db = get_database()
     collection_name = db['testCollection']
-    insert_data = {"name":"John", "age":"999"}
-    collection_name.insert_one(insert_data)
-    
     # collection化したものは、強制的に_idがつくため、_idを除外する必要がある。
     data = list(collection_name.find({}, {'_id': 0}))
     return {"data": data}
+
+@app.post("/post")
+async def post_user_data(request: Request):
+    received_data = await request.json()
+    db = get_database()
+    collection_name = db['testCollection']
+    collection_name.insert_one(received_data)
+    return{"insert": "OK!"}
+    
+    
+    
