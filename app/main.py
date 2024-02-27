@@ -49,5 +49,19 @@ async def post_user_data(request: Request):
     collection_name.insert_one(received_data)
     return{"insert": "OK!"}
     
+@app.post("/update")
+async def update_user_age(request: Request):
+    received_data = await request.json()
+    user_name = received_data['username']
+    update_age = received_data['age']
     
+    db = get_database()
+    collection = db['testCollection']
+    update_user = collection.find_one({'username': user_name})
     
+    if update_user == None or update_user == "":
+        return {"warn":"Userが存在しません!"}
+    else:
+        collection.update_one({'username': user_name}, {'$set':{'age': update_age}})
+        result = collection.find_one({}, {'_id': 0})
+        return {'result': result}
