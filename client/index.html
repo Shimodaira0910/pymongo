@@ -22,6 +22,17 @@
     </form>
 
     <div id="postResponse"></div>
+    
+    <h2>Update Data on Server</h2>
+    <form id="updateForm">
+        <label for="updateUsername">Username to Update:</label>
+        <input type="text" id="updateUsername" name="updateUsername" required>
+        <label for="updateAge">New Age:</label>
+        <input type="number" id="updateAge" name="updateAge" required>
+        <button type="submit">Update</button>
+    </form>
+
+    <div id="updateResponse"></div>
 
     <script>
         document.getElementById('fetchData').addEventListener('click', async function() {
@@ -60,6 +71,33 @@
             } catch (error) {
                 console.error('Error sending data:', error);
                 document.getElementById('postResponse').textContent = 'Failed to send data.';
+            }
+        });
+
+        document.getElementById('updateForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // フォームのデフォルト送信を防止
+
+            const updateUsername = document.getElementById('updateUsername').value;
+            const updateAge = document.getElementById('updateAge').value;
+
+            try {
+                const response = await fetch('http://localhost:8000/update', { // FastAPIサーバーのURLに置き換えてください
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: updateUsername,
+                        age: updateAge,
+                    }),
+                });
+
+                const responseData = await response.json();
+                
+                document.getElementById('updateResponse').textContent = 'Update Response: ' + JSON.stringify(responseData);
+            } catch (error) {
+                console.error('Error updating data:', error);
+                document.getElementById('updateResponse').textContent = 'Failed to update data.';
             }
         });
     </script>
