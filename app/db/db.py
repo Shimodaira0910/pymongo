@@ -30,11 +30,9 @@ class MongoDbManager:
         self._collection.insert_one(received_data)
         return{"insert": "OK!"}
     
-    def update_user_age(self, received_data) -> dict:
-        user_name = received_data['username']
-        update_age = received_data['age']    
+    def update_user_age(self, user_name, update_age) -> dict:
         update_user = self._collection.find_one({'username': user_name})
-
+        
         if update_user is None or update_user == "":
             return {"warn":"Userが存在しません!"}
         else:
