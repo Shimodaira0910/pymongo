@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from db.db import MongoDbManager
+from business.service import DbService
 
 app = FastAPI()
-mongo_manager = MongoDbManager()
+db_service = DbService()
 
 origins = [
     "http://localhost:8080",
@@ -20,16 +20,16 @@ app.add_middleware(
 
 @app.get("/get")
 async def get_database_info():
-    return mongo_manager.get_user_list()
+    return db_service.get_user()
 
 @app.post("/post")
 async def post_user_data(request: Request):
     received_data = await request.json()
-    result = mongo_manager.register_user_data(received_data)
+    result = db_service.regist_user(received_data)
     return result
 
-#TODO エラー
 @app.post("/update")
 async def update_user_age(request: Request):
     received_data = await request.json()
-    return mongo_manager.update_user_age(received_data)
+    return db_service.regist_user(received_data)
+    
